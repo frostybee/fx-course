@@ -20,7 +20,7 @@ export default defineConfig({
         social: {
           github: "https://github.com/frostybee/fx-course"
         },
-        lastUpdated: true,
+        lastUpdated: false,
         customCss: [
           // Relative path to your custom CSS file
           "./src/styles/custom_styles.css",
