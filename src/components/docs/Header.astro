@@ -1,0 +1,64 @@
+---
+import type { Props } from '@astrojs/starlight/props';
+import Search from "@astrojs/starlight/components/Search.astro";
+import ThemeSelect from "@astrojs/starlight/components/ThemeSelect.astro";
+import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
+import LanguageSelect from "@astrojs/starlight/components/LanguageSelect.astro";
+import GoogleAnalytics from '../GoogleAnalytics.astro'
+---
+<GoogleAnalytics></GoogleAnalytics>
+
+<div class="header sl-flex">
+  <a href="/fx-course/" class="site-title">
+    <!-- <img src="/img/my-logo.svg" alt="My website's logo"> -->
+    <span>420-203-RE Program Development in a Graphical Environment</span>
+  </a>
+  <div class="secondary-wrap">
+    <Search {...Astro.props} />
+    <SocialIcons {...Astro.props} />
+    <div class="sl-hidden md:sl-flex selects">
+      <ThemeSelect {...Astro.props} />
+      <LanguageSelect {...Astro.props} />
+    </div>
+  </div>
+</div>
+
+<style>
+  .header {
+    gap: var(--sl-nav-gap);
+    align-items: center;
+    height: 100%;
+  }
+
+  a {
+    text-decoration: none;
+    color: var(--sl-color-text);
+  }
+
+  .secondary-wrap {
+    margin-inline-start: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--sl-nav-gap);
+  }
+
+  .site-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .site-title img {
+    width: 2.5em;
+    flex: none;
+  }
+
+  .site-title span {
+    font-size: larger;
+    white-space: nowrap;
+  }
+
+  .selects {
+    gap: var(--space-s)
+  }
+</style>

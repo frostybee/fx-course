@@ -1,0 +1,111 @@
+---
+title: Validating JSON Data in PHP
+description: Validating JSON Data in PHP
+sidebar:
+    label: "JSON Validation"
+    order: 2
+---
+import LinkOut from '../../../components/LinkOut.astro'
+
+### Why Use <LinkOut href="https://www.php.net/manual/en/function.json-last-error.php"> `json_last_error()`</LinkOut> in PHP
+
+The `json_last_error()` function in PHP is used to check for **errors** that may have occurred during the last JSON encoding or decoding operation. It's important to validate JSON data to ensure that it has been parsed correctly and to handle any issues that arise from malformed JSON.
+
+**Reasons to Use `json_last_error()`**:
+
+1. **Error Detection**: Helps detect issues with JSON data, such as syntax errors or invalid characters, which can prevent unexpected behavior or application crashes.
+2. **Debugging**: Provides specific error codes that help identify and debug problems with JSON data.
+3. **User Feedback**: Allows you to provide meaningful error messages to users if the JSON data is invalid or corrupt.
+4. **Data Integrity**: Ensures that only valid JSON data is processed, which is essential for maintaining data integrity and security in applications.
+
+### How to Use <LinkOut href="https://www.php.net/manual/en/function.json-last-error.php"> `json_last_error()`</LinkOut>
+
+:::note
+- The `json_last_error()` function returns an integer representing the **error code** of the last JSON encoding or decoding operation. You can use <LinkOut href="https://www.php.net/manual/en/function.json-last-error-msg.php"> `json_last_error_msg()`</LinkOut> to get a textual description of the error.  
+- Using `json_last_error()` and `json_last_error_msg()` helps ensure that your application handles JSON data robustly, maintaining data integrity and improving user experience.
+:::
+
+Here are some common error codes:
+
+- **JSON_ERROR_NONE**: No error occurred.
+- **JSON_ERROR_DEPTH**: Maximum stack depth exceeded.
+- **JSON_ERROR_STATE_MISMATCH**: Underflow or the modes mismatch.
+- **JSON_ERROR_CTRL_CHAR**: Unexpected control character found.
+- **JSON_ERROR_SYNTAX**: Syntax error, malformed JSON.
+- **JSON_ERROR_UTF8**: Malformed UTF-8 characters, possibly incorrectly encoded.
+- **JSON_ERROR_UNSUPPORTED_TYPE**: A value of a type that cannot be encoded was given.
+- **JSON_ERROR_UNSUPPORTED_TYPE**: A property name that cannot be encoded was given.
+
+### **Examples**
+
+#### 1. **Decoding JSON Data**
+
+When decoding JSON data, use `json_last_error()` to ensure that the data was decoded successfully.
+
+```php
+$json_data = '{"name": "John", "age": 30}'; // Valid JSON
+
+$data = json_decode($json_data);
+
+if (json_last_error() === JSON_ERROR_NONE) {
+    echo "JSON decoded successfully.\n";
+    print_r($data);
+} else {
+    echo "Error decoding JSON: " . json_last_error_msg() . "\n";
+}
+```
+
+#### 2. **Handling Malformed JSON**
+
+Handling errors when the JSON data is malformed.
+
+```php
+$malformed_json = '{"name": "John", "age": 30'; // Missing closing bracket
+
+$data = json_decode($malformed_json);
+
+if (json_last_error() !== JSON_ERROR_NONE) {
+    echo "Error decoding JSON: " . json_last_error_msg() . "\n";
+    // Output: Error decoding JSON: Syntax error
+}
+```
+
+#### 3. **Encoding JSON Data**
+
+When encoding data to JSON, use `json_last_error()` to ensure the encoding was successful.
+
+```php
+$data_array = ['name' => 'John', 'age' => 30];
+
+$json_data = json_encode($data_array);
+
+if (json_last_error() === JSON_ERROR_NONE) {
+    echo "JSON encoded successfully.\n";
+    echo $json_data;
+} else {
+    echo "Error encoding JSON: " . json_last_error_msg() . "\n";
+}
+```
+
+#### 4. **Handling Encoding Errors**
+
+Example of handling errors during JSON encoding:
+
+```php
+// Using a resource in data (which cannot be encoded)
+$data_with_resource = ['name' => 'John', 'file' => fopen('example.txt', 'r')];
+
+$json_data = json_encode($data_with_resource);
+
+if (json_last_error() !== JSON_ERROR_NONE) {
+    echo "Error encoding JSON: " . json_last_error_msg() . "\n";
+    // Output: Error encoding JSON: Object of class resource could not be converted to string
+}
+```
+
+### **Best Practices**
+:::tip
+- **Always check for errors**: After encoding or decoding JSON, check `json_last_error()` to handle any issues.
+- **Provide meaningful error messages**: Use `json_last_error_msg()` to offer clear and actionable feedback to users or developers.
+- **Validate JSON data**: Ensure JSON data conforms to expected formats and standards before processing it.
+:::

@@ -1,0 +1,37 @@
+{
+  "name": "subsequent-fusion",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.3",
+    "@astrojs/mdx": "^3.1.7",
+    "@astrojs/partytown": "^2.1.2",
+    "@astrojs/react": "^3.6.2",
+    "@astrojs/starlight": "^0.28.2",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "astro": "^4.15.9",
+    "astro-i18next": "^1.0.0-beta.21",
+    "dayjs": "^1.11.12",
+    "mermaid": "^10.9.1",
+    "prettier": "^3.3.3",
+    "prism-react-renderer": "^2.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-minimal-pie-chart": "^8.4.0",
+    "remark-mermaidjs": "^6.0.0",
+    "respec": "^35.1.1",
+    "sharp": "^0.33.5",
+    "starlight-image-zoom": "^0.8.0",
+    "starlight-links-validator": "^0.10.1",
+    "starlight-view-modes": "^0.6.0",
+    "typescript": "^5.5.3"
+  }
+}

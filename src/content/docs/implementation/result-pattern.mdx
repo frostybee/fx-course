@@ -1,0 +1,187 @@
+---
+title: The Result Pattern
+description: Implementing the Result Pattern in PHP.
+sidebar:
+    label: "Result Pattern"
+    order: 1
+---
+
+import { Steps, Aside } from '@astrojs/starlight/components';
+import  CodeBlock  from "../../../components/CodeBlock.astro";
+import ExternalLink from "../../../components/ExternalLink.astro";
+
+
+## ℹ What is the Result Pattern?
+
+The **Result pattern** is a design pattern used to handle the outcome of operations in a way that explicitly communicates success or failure, and potentially carries additional information about the result or the error.
+
+It provides a structured way to handle the outcomes of functions or methods, especially in languages that lack built-in support for tuples or multiple return values. The key idea is to return an object (often called `Result`, `Outcome`, `Response`, etc.) that contains information about whether the operation was successful and, if not, what went wrong.
+
+## ⚙ Components of the Result Pattern
+
+The Result pattern encapsulates the outcome of a function or operation into a structured object, rather than using exceptions for error handling. This pattern typically includes:
+
+1. **Success/Failure Indicator:**
+   - Typically, a boolean flag (`$success` or similar) that indicates whether the operation was successful (`true`) or not (`false`).
+
+2. **Result Data:**: The actual data returned if the operation succeeded.
+
+3. **Error Information:** An error message, exception object, or any other relevant information explaining why the operation failed.
+
+4. **Methods to Access Results:**
+   - **Success/Failure Checkers:** Methods (`isSuccess()` and `isFailure()`) to check whether the operation succeeded or failed.
+   - **Data Access:** Method (`getData()`) to retrieve the result data when the operation is successful.
+   - **Error Access:** Method (`getError()`) to retrieve the error message or object when the operation fails.
+
+## 📈 Benefits of the Result Pattern vs. Exceptions
+
+1. **Control Over Flow**: The Result pattern provides a more explicit way to handle success and failure. It does not disrupt the flow of the program as exceptions do, making the handling of different outcomes more straightforward and predictable.
+
+2. **Performance**: Exceptions can be more expensive to handle than simple return values, especially in performance-critical sections of code. Using the Result pattern can be more efficient when performance is a concern.
+
+3. **Error Context**: The Result pattern allows for more detailed error reporting and handling. You can attach additional context to the error, whereas exceptions usually require more effort to provide context or custom error information.
+
+4. **Avoids Exception Overuse**: Exceptions should be used for exceptional situations, not for regular control flow. The Result pattern keeps the normal flow of control clear and explicit, using return values for regular outcomes.
+
+5. **Enhanced Readability**: Code that uses the Result pattern can be easier to read and understand because it avoids the complexity of try/catch blocks and makes it clear when an operation might fail.
+
+6. **Testing and Debugging**: It can be easier to test and debug code that uses the Result pattern because it avoids the need to simulate exceptional conditions and handle them with try/catch blocks.
+
+7. **Composability:** Result objects can be easily passed around and composed with other functions or methods, promoting code reuse and maintainability.
+
+## ✅ When to Use Each
+
+1. **Result Pattern**: Ideal for cases where you expect failures as part of normal operation (e.g., user input validation, simple computations).
+  
+2. **Exceptions**: More appropriate for truly exceptional, unexpected conditions that should not occur under normal operation (e.g., file system errors, database connectivity issues).
+
+<Aside type="tip">
+The Result pattern provides a good alternative to exceptions for handling predictable failure conditions, making the code more readable, maintainable, and often more performant.
+</Aside>
+
+## 🚀 Using the Result Pattern in PHP 
+ 
+<Steps>
+
+1. <CodeBlock title=" Create a the following PHP class">
+    ```php wrap
+    <?php
+    class Result
+    {
+        private $is_success;
+        private $data;
+        private $error;
+        private function __construct(bool $is_success, $data = null, $error = null)
+        {
+            $this->is_success = $is_success;
+            $this->data = $data;
+            $this->error = $error;
+        }
+
+        public static function success($data): Result
+        {
+            return new self(true, $data);
+        }
+
+        public static function failure($error): Result
+        {
+            return new self(false, null, $error);
+        }
+
+        public function isSuccess(): bool
+        {
+            return $this->is_success;
+        }
+
+        public function getData()
+        {
+            if (!$this->is_success) {
+                throw new Exception("Cannot get data from a failed result.");
+            }
+            return $this->data;
+        }
+
+        public function getError()
+        {
+            if ($this->is_success) {
+                throw new Exception("Cannot get error from a successful result.");
+            }
+            return $this->error;
+        }
+    }
+    ?>
+    ```
+
+    </CodeBlock>
+
+2. <CodeBlock title="Using the Result pattern: Example #1">
+
+    ```php
+    <?php
+    function divide($numerator, $denominator): Result
+    {
+        if ($denominator == 0) {
+            return Result::failure("Cannot divide by zero.");
+        }
+
+        $result = $numerator / $denominator;
+        return Result::success($result);
+    }
+
+    // Example usage:
+    $result = divide(10, 2);
+
+    if ($result->isSuccess()) {
+        echo "Result: " . $result->getData();
+    } else {
+        echo "Error: " . $result->getError();
+    }
+
+    $result = divide(10, 0);
+
+    if ($result->isSuccess()) {
+        echo "Result: " . $result->getData();
+    } else {
+        echo "Error: " . $result->getError();
+    }
+    ?>
+    ```
+    </CodeBlock>        
+3. <CodeBlock title="Using the Result pattern: Example #2">
+    ```php
+    <?php
+    // Example function: Retrieve user data by ID from database
+    function getUserData($userId) {
+        // Simulating database operation
+        $users = [
+            1 => ['name' => 'John Doe', 'email' => 'john@example.com'],
+            2 => ['name' => 'Jane Smith', 'email' => 'jane@example.com'],
+        ];
+
+        if (array_key_exists($userId, $users)) {
+            return Result::success($users[$userId]);
+        } else {
+            return Result::fail("User not found");
+        }
+    }
+
+    // Example usage:
+    $result1 = getUserData(1);
+    if ($result1->isSuccess()) {
+        $user1 = $result1->getValue();
+        echo "User found: {$user1['name']} ({$user1['email']})\n";
+    } else {
+        echo "Error: " . $result1->getError() . "\n";
+    }
+
+    $result2 = getUserData(3);
+    if ($result2->isSuccess()) {
+        $user2 = $result2->getValue();
+        echo "User found: {$user2['name']} ({$user2['email']})\n";
+    } else {
+        echo "Error: " . $result2->getError() . "\n";
+    }
+    ?>
+    ```
+    </CodeBlock>
+</Steps>
