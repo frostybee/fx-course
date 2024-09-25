@@ -66,15 +66,15 @@ export default defineConfig({
                 link: "/guides/"
               }]
           }
-      ]
+        ]
       }),
     mdx(),
     react(),
     sitemap(),
     partytown({
-        config: {
-          forward: ["dataLayer.push"],
-        },
-      }),
+      config: {
+        forward: ["dataLayer.push"],
+      },
+    }),
   ]
 });
