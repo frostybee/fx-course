@@ -10,14 +10,14 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.3",
+    "@astrojs/check": "^0.9.4",
     "@astrojs/mdx": "^3.1.7",
     "@astrojs/partytown": "^2.1.2",
     "@astrojs/react": "^3.6.2",
     "@astrojs/starlight": "^0.28.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "astro": "^4.15.9",
+    "astro": "^4.15.11",
     "astro-i18next": "^1.0.0-beta.21",
     "dayjs": "^1.11.12",
     "mermaid": "^10.9.1",
