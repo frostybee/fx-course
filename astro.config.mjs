@@ -64,7 +64,15 @@ export default defineConfig({
               {
                 label: "Information",
                 link: "/guides/"
-              }]
+              },
+              {
+                label: "JavaFX Scene",
+                collapsed: false,
+                autogenerate: {
+                  directory: "ui"
+                }
+              }
+            ]
           }
         ]
       }),
