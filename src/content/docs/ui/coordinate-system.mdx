@@ -6,12 +6,101 @@ sidebar:
     order: 1
 ---
 
-In JavaFX, the coordinate system is crucial for positioning, transforming, and rendering graphical elements. The JavaFX coordinate system is primarily based on a **2D Cartesian plane**, where each point has an \(x\)-coordinate and a \(y\)-coordinate. Understanding this system helps in managing layouts, positioning nodes, and performing geometric transformations.
+In JavaFX, the coordinate system is essential for positioning, transforming, and rendering graphical elements. The JavaFX coordinate system is based on a **2D Cartesian plane**, where each point has an **x**-coordinate and a **y**-coordinate. Understanding this system helps in managing layouts, positioning nodes, and performing geometric transformations.
 
-### 1. **Basics of the Coordinate System**
-In JavaFX, the top-left corner of the scene or node's coordinate space is the origin \((0, 0)\), and the coordinates increase as you move right (positive \(x\)) and down (positive \(y\)). This convention is known as a **top-left coordinate system** and is different from the standard mathematical Cartesian system where the \(y\)-axis increases upwards.
+## **Basics of the JavaFX Coordinate System**
 
-- **X-axis**: Horizontal axis; increases from left to right.
-- **Y-axis**: Vertical axis; increases from top to bottom.
+- **Origin Point:** The **top-left corner** of the scene or node's coordinate space is the origin (0, 0).  
+- **Axes**:
+  - The **X-axis** runs horizontally, with positive values extending to the right.
+  - The **Y-axis** runs vertically, with positive values extending downwards.
 
 For example, a point at coordinates (50, 100) represents a position 50 units to the right of the origin and 100 units down.
+
+## **Coordinate System in Different Contexts**
+JavaFX uses a **scene graph** model for structuring the content of graphical user interfaces. Every graphical element (shapes, UI controls, text, etc.) is represented by a **node**. The coordinate system in JavaFX is hierarchical, meaning each node has its own coordinate system **relative** to its parent. This introduces the concept of **local coordinates** and **scene coordinates**.
+
+- **Scene Coordinates**: This is the default coordinate system used by JavaFX for all nodes in a scene. When you position a node, you typically use scene coordinates.
+    - The coordinate system relative to the entire scene. 
+    - The scene's coordinate system is defined by its width and height. When you set the scene's dimensions, you effectively define the bounds for placing nodes.
+  
+- **Local Coordinates**: Each node in JavaFX has its own local coordinate system, with its own origin (0, 0) located at its top-left corner. When you apply transformations (like translation, rotation, or scaling) to a node, these transformations are applied in the X Axis**node's local coordinate space**.
+
+- **Parent Node Coordinates**: When a child node is placed within a parent node, its position is defined relative to its parent's coordinate system. If the parent has transformations applied (like scaling or rotation), the child's coordinates will be affected by those transformations.
+
+**Example:**
+```java
+Rectangle rect = new Rectangle(10, 10, 100, 50);
+rect.setLayoutX(50);
+rect.setLayoutY(50);
+```
+In the example above:
+- The `Rectangle` has local coordinates from (0, 0) to (100, 50) (its size).
+- Its position in the scene is affected by its `layoutX` and `layoutY`, meaning it is placed at (50, 50) in the scene's coordinate system.
+
+## **Scene, Nodes, and Parent-Child Relationships**
+
+Each JavaFX application has a **scene**, and each scene contains a **scene graph** (root node) that defines the coordinate system for all its children. When a child node is positioned, scaled, or rotated, it is done relative to its parent.
+
+### Key Terminologies:
+
+- **Parent**: The container node that holds child nodes. It defines a coordinate system for its children.
+- **Child**: A node positioned and rendered within the parent's coordinate system.
+- **Root Node**: The topmost node in the scene graph that all other nodes are descendants of. The scene's coordinate system is relative to the root node.
+
+### Example of Parent-Child Coordinate Relationships:
+
+```java
+Group root = new Group();
+Rectangle childRect = new Rectangle(10, 10, 100, 50);
+childRect.setLayoutX(30);
+childRect.setLayoutY(30);
+root.getChildren().add(childRect);
+```
+Here, the `childRect` will have coordinates (30, 30) relative to the `Group` (its parent). The group itself can be placed anywhere within the scene, and its child will inherit that position as well.
+
+## **Node Transformations**
+
+JavaFX supports several transformations that can affect the coordinate system:
+
+- **Translation**: Moves the node to a new position. For example, translating a node by (x, y) means moving it **x units** right and **y units** down from its original position.
+    - `node.setTranslateX(double x)`
+    - `node.setTranslateY(double y)`  
+  
+- **Scaling**: Changes the size of the node. Scaling can affect both the X and Y dimensions and can cause nodes to grow or shrink in size, affecting their local coordinates.
+    - `node.setScaleX(double scaleFactor)`
+    - `node.setScaleY(double scaleFactor)`
+
+- **Rotation**: Rotates the node around a specified pivot point (default is the center of the node). This affects how the node is drawn relative to its original position.
+    - `node.setRotate(double angle)`
+
+- **Shearing**: Skews the node in a specified direction (either horizontally or vertically), which can create a slanting effect.
+
+**Example:**
+```java
+Rectangle rect = new Rectangle(10, 10, 100, 50);
+rect.setRotate(45); // Rotates the rectangle 45 degrees clockwise
+rect.setScaleX(2);  // Scales the rectangle along the X-axis
+```
+
+## **Layout Coordinate Properties**
+
+JavaFX nodes have different properties that control their layout in the coordinate system:
+- **LayoutX** and **LayoutY**: Specifies the position of the node within its parent's coordinate system. This is generally used to position nodes within a layout container.
+- **TranslateX** and **TranslateY**: Moves the node relative to its current position, without affecting the layout.
+- **BoundsInParent**: Represents the bounds of the node in the parent's coordinate system, taking into account any transformations like translation, scaling, and rotation.
+- **BoundsInLocal**: Represents the bounds of the node in its local coordinate space, without any transformations.
+
+## **Coordinate System Conversion**
+
+JavaFX provides methods for converting between different coordinate systems. These are useful when you need to map points between nodes, scenes, or even screens.
+
+- **Scene to Local**: You can convert scene coordinates to local coordinates using the `sceneToLocal(double sceneX, double sceneY)` method of a node. This is useful when you need to know where a point lies in relation to a node's local coordinate system.
+
+- **Local to Scene**: Conversely, the `localToScene(double localX, double localY)` method converts local coordinates to scene coordinates.
+
+- **Parent to Local**: The method `parentToLocal(double parentX, double parentY)` converts coordinates from the parent's coordinate system to the child node's local coordinates.
+
+## **Coordinate System Used By Layout Managers**
+
+In JavaFX, various layout containers (like `VBox`, `HBox`, `GridPane`, etc.) arrange child nodes using their own coordinate systems and rules. The layout algorithms take into account the preferred sizes, margins, and alignment of the nodes, affecting their final positions within the parent node.
