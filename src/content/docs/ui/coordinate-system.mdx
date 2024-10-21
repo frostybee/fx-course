@@ -2,7 +2,7 @@
 title: JavaFX Coordinate System 
 description: JavaFX Coordinate System Basics
 sidebar:
-    label: "Coordinate System"
+    label: "FX Coordinate System"
     order: 1
 ---
 
@@ -16,6 +16,8 @@ In JavaFX, the coordinate system is essential for positioning, transforming, and
   - The **Y-axis** runs vertically, with positive values extending downwards.
 
 For example, a point at coordinates (50, 100) represents a position 50 units to the right of the origin and 100 units down.
+
+![JavaFX Coordinate System](../../../assets/images/fx-coordinate-system.png)
 
 ## **Coordinate System in Different Contexts**
 JavaFX uses a **scene graph** model for structuring the content of graphical user interfaces. Every graphical element (shapes, UI controls, text, etc.) is represented by a **node**. The coordinate system in JavaFX is hierarchical, meaning each node has its own coordinate system **relative** to its parent. This introduces the concept of **local coordinates** and **scene coordinates**.
