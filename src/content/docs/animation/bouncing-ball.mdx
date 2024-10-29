@@ -1,0 +1,85 @@
+---
+title: Bouncing Ball App 
+description: Animating a Bouncing Ball
+sidebar:
+    label: "Bouncing Ball"
+    order: 1
+---
+
+**Instance variables:**
+
+- **`Circle ball`**: This variable represents the graphical ball that will bounce.
+- **`ballRadius`**: The radius of the ball, set to 15 pixels.
+- **`ballX`** and **`ballY`**: Initial coordinates for the ball's position. `ballX` is fixed at 200 pixels (horizontal), while `ballY` starts at 100 pixels (vertical).
+- **`velocityY`**: This variable tracks the ball's vertical speed. It starts at 0, meaning the ball is initially stationary.
+- **`gravity`**: A constant that simulates gravitational acceleration, set to 0.5 pixels per frame.
+- **`bounceFactor`**: A constant that determines how much energy is lost when the ball bounces. A value of 0.7 means the ball retains 70% of its vertical velocity after a bounce.
+
+
+```java
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+
+public class BouncingBallApp extends Application {
+
+    private Circle ball;
+    private double ballRadius = 15;
+    private double ballX = 200;
+    private double ballY = 100;
+    private double velocityY = 0; // Initial vertical velocity
+    private final double gravity = 0.5; // Acceleration due to gravity
+    private final double bounceFactor = 0.7; // Energy loss on bounce
+
+    @Override
+    public void start(Stage primaryStage) {
+        Pane pane = new Pane();
+        Scene scene = new Scene(pane, 400, 400);
+
+        ball = new Circle(ballRadius, Color.BLUE);
+        ball.setCenterX(ballX);
+        ball.setCenterY(ballY);
+        pane.getChildren().add(ball);
+
+        startAnimation(pane);
+
+        primaryStage.setTitle("Bouncing Ball Simulation");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private void startAnimation(Pane pane) {
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateBall();
+            }
+        }.start();
+    }
+
+    private void updateBall() {
+        // Apply gravity
+        velocityY += gravity;
+
+        // Update the ball's position
+        ballY += velocityY;
+
+        // Check for collision with the bottom
+        if (ballY + ballRadius >= 400) { // Assuming pane height is 400
+            ballY = 400 - ballRadius; // Reset position to the edge
+            velocityY = -velocityY * bounceFactor; // Reverse and reduce velocity
+        }
+
+        // Update the ball's center
+        ball.setCenterY(ballY);
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```

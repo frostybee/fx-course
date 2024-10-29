@@ -74,6 +74,14 @@ export default defineConfig({
               directory: "ui"
             }
           }
+          ,
+          {
+            label: "Animation",
+            collapsed: false,
+            autogenerate: {
+              directory: "animation"
+            }
+          }
         ]
       }),
     mdx(),
