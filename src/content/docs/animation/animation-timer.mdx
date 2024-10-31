@@ -1,0 +1,96 @@
+---
+title: Working with JavaFX AnimationTimer
+description: Using JavaFX AnimationTimer
+sidebar:
+    label: "AnimationTimer"
+    order: 1
+---
+import LinkOut from '../../../components/LinkOut.astro'
+
+## What Is AnimationTimer?
+
+In JavaFX, an <LinkOut href='https://openjfx.io/javadoc/23/javafx.graphics/javafx/animation/AnimationTimer.html'>`AnimationTimer`</LinkOut> is a class designed for creating animations and handling **real-time updates** in a smooth and efficient manner. It allows you to execute code continuously at the frame rate of the display, making it ideal for tasks that require continuous updates, such as game loops, interactive graphics, or dynamic visual effects.
+
+:::note
+`AnimationTimer` allows you to define **actions** that should occur at **regular intervals**, typically every frame of an animation. It provides a way to synchronize the visual representation of an application with the underlying logic or state changes.
+:::
+
+## Key Components
+
+1. **start() Method**: 
+   - This method begins the timer, allowing the `handle(long now)` method to be called repeatedly.
+   - When started, the timer will invoke the `handle` method on every frame, typically synchronized with the **display refresh rate**.
+2. **stop() Method**: 
+   - This method stops the timer, ceasing the calls to `handle`.
+3. **handle(long now)**:
+   - This is an abstract method that needs to be overridden in a subclass.
+   - The `long now` parameter represents the **current timestamp** in nanoseconds, allowing you to calculate elapsed time and update your application accordingly.
+   - This method is called once per frame, making it ideal for updating the state of animations or processing game logic.
+
+## Example Usage
+
+Here's a simple example of how to use `AnimationTimer`:
+
+```Java
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+
+public class AnimationTimerExample extends Application {
+
+    private double deltaX = 2;
+    private Circle circle;
+
+    @Override
+    public void start(Stage primaryStage) {
+        circle = new Circle(20, Color.BLUE);
+        circle.setTranslateX(100);
+        circle.setTranslateY(100);
+
+        StackPane root = new StackPane(circle);
+        Scene scene = new Scene(root, 400, 400);
+
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                // Update the position of the circle
+                circle.setTranslateX(circle.getTranslateX() + deltaX);
+
+                // Reverse direction if the circle hits the edge
+                if (circle.getTranslateX() >= 380 || circle.getTranslateX() <= 20) {
+                    deltaX *= -1; // Change direction
+                }
+            }
+        };
+
+        timer.start(); // Start the timer
+
+        primaryStage.setTitle("Animation Timer Example");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+## Key Features
+
+- **Continuous Updates**: The `AnimationTimer` calls the `handle(long now)` method repeatedly, typically once per frame, allowing you to update your scene or perform calculations based on the current time.
+
+- **Frame rate independence**: Since `AnimationTimer` uses the current time in nanoseconds, you can adjust your animations based on the time elapsed between frames, ensuring smooth performance regardless of the frame rate.
+
+- **Simplicity**: It allows for easy implementation of animation loops without the need for complex timing logic or managing frame updates manually. Unlike other animation classes that require setting up keyframes, `AnimationTimer` allows for more flexible, programmatic animations.
+
+## Best Practices
+
+- **Performance considerations**: Since `handle` can be called many times per second, ensure that the operations performed are efficient to prevent frame drops or lag in the application.
+
+- **Threading**: `AnimationTimer` operates on the JavaFX Application Thread, which is where all JavaFX updates should occur. Avoid performing long-running tasks in the `handle` method; use background threads for intensive processing.
+
+- **Integration with other animations**: `AnimationTimer` can be used in conjunction with JavaFX transitions and animations to create more complex animations and effects.
