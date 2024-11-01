@@ -1,0 +1,100 @@
+---
+title: Applying Physics to a Moving Ball
+description: Applying Physics to a Moving Ball
+sidebar:
+    label: "Applying Physics"
+    order: 3
+---
+
+To apply physics formulas to a moving circle in JavaFX, you'll want to **simulate the motion** by updating the circle's position based on velocity and acceleration. 
+
+**Apply physics**: Use variables for position, velocity, and acceleration, then update the circle's position in a timeline or animation loop.
+
+## Example
+
+Here's a simple example that demonstrates how to create a moving circle using JavaFX.
+
+```java
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+public class MovingCircleApp extends Application {
+
+    private double x = 100;      // Initial x position
+    private double y = 100;      // Initial y position
+    private double velocityX = 2; // Velocity in x direction
+    private double velocityY = 1; // Velocity in y direction
+    private double accelerationX = 0; // Acceleration in x direction
+    private double accelerationY = 0; // Acceleration in y direction
+
+    @Override
+    public void start(Stage primaryStage) {
+        Circle circle = new Circle(20, Color.BLUE); // Create a circle with radius 20
+        circle.setCenterX(x);
+        circle.setCenterY(y);
+
+        Pane pane = new Pane(circle);
+        Scene scene = new Scene(pane, 400, 400);
+
+        primaryStage.setTitle("Moving Circle");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+        // Create a timeline to update the circle's position
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(16), e -> update(circle)));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+    }
+
+    private void update(Circle circle) {
+        // Update velocity based on acceleration
+        velocityX += accelerationX;
+        velocityY += accelerationY;
+
+        // Update position based on velocity
+        x += velocityX;
+        y += velocityY;
+
+        // Update the circle's position
+        circle.setCenterX(x);
+        circle.setCenterY(y);
+
+        // Simple boundary collision detection
+        if (x < 0 || x > 400) {
+            velocityX *= -1; // Reverse direction on x collision
+        }
+        if (y < 0 || y > 400) {
+            velocityY *= -1; // Reverse direction on y collision
+        }
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+
+## Explanation
+
+1. **Circle creation**: A `Circle` object is created with a specified radius and color.
+
+2. **Timeline animation**: A `Timeline` is set up to update the circle's position approximately every 16 milliseconds (about 60 FPS).
+
+3. **Physics update logic**:
+   - The velocity is updated based on any defined acceleration.
+   - The position is updated based on the current velocity.
+   - Simple boundary detection is used to reverse the direction of the circle when it hits the edges of the pane.
+
+## Customization
+
+- You can adjust `velocityX` and `velocityY` to change the initial movement speed.
+- To add more complex physics (like gravity), modify the acceleration variables accordingly.
+- You can also add user controls to change direction or speed dynamically.
