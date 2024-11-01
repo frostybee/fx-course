@@ -84,11 +84,9 @@ public class MovingCircleApp extends Application {
 
 ## Explanation
 
-1. **Circle creation**: A `Circle` object is created with a specified radius and color.
+1. **Timeline animation**: A `Timeline` is set up to update the circle's position approximately every 16 milliseconds (about 60 FPS).
 
-2. **Timeline animation**: A `Timeline` is set up to update the circle's position approximately every 16 milliseconds (about 60 FPS).
-
-3. **Physics update logic**:
+2. **Physics update logic**:
    - The velocity is updated based on any defined acceleration.
    - The position is updated based on the current velocity.
    - Simple boundary detection is used to reverse the direction of the circle when it hits the edges of the pane.
