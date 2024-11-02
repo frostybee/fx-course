@@ -1,0 +1,79 @@
+---
+title: Controlling Animation Speed
+description: Controlling Animation Speed
+sidebar:
+    label: "Animation Speed"
+    order: 5
+---
+
+To slow down an animation implemented using `AnimationTimer` in JavaFX, you can control the **rate** at which the timer updates the animation by using a **time-based approach**.   
+
+Here's how you can achieve that:
+:::note
+1. **Use a frame duration**: Keep track of the time elapsed since the last update, and only update the animation when a certain duration has passed.
+
+2. **Adjust the timing factor**: You can introduce a **timing factor** that represents how much you want to slow down the animation.
+:::
+
+Here's an example to illustrate this:
+
+```java
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
+public class SlowDownAnimationExample extends Application {
+    private double x = 0;
+    private double speed = 2; // Speed of the animation
+    private double slowFactor = 0.5; // Slow down factor (0.5 = half speed)
+    private long lastUpdate = 0;
+
+    @Override
+    public void start(Stage primaryStage) {
+        Pane pane = new Pane();
+        Circle circle = new Circle(20, Color.BLUE);
+        pane.getChildren().add(circle);
+
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (lastUpdate == 0) {
+                    lastUpdate = now; // Initialize lastUpdate
+                }
+                // Calculate the elapsed time in seconds
+                double elapsedTime = (now - lastUpdate) / 1_000_000_000.0;
+
+                // Only update the animation based on the slow factor
+                if (elapsedTime >= slowFactor) {
+                    x += speed; // Update position based on speed
+                    circle.setCenterX(x);
+                    lastUpdate = now; // Reset lastUpdate
+                }
+            }
+        };
+
+        timer.start();
+
+        Scene scene = new Scene(pane, 400, 300);
+        primaryStage.setTitle("Slow Down Animation Example");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+### Explanation:
+
+- **`lastUpdate`**: This variable keeps track of the last time the animation was updated.
+- **`elapsedTime`**: This is calculated each frame to determine how much time has passed since the last update.
+- **`slowFactor`**: This controls how often the animation updates. A value of `0.5` means the animation updates only every half a second.
+- The circle's position is updated only if the elapsed time is greater than or equal to the `slowFactor`.
+
+By adjusting the `slowFactor`, you can control how slow or fast the animation runs.
