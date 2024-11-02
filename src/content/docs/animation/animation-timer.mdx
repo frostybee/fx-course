@@ -12,7 +12,8 @@ import LinkOut from '../../../components/LinkOut.astro'
 In JavaFX, an <LinkOut href='https://openjfx.io/javadoc/23/javafx.graphics/javafx/animation/AnimationTimer.html'>`AnimationTimer`</LinkOut> is a class designed for creating animations and handling **real-time updates** in a smooth and efficient manner. It allows you to execute code continuously at the frame rate of the display, making it ideal for tasks that require continuous updates, such as game loops, interactive graphics, or dynamic visual effects.
 
 :::note
-`AnimationTimer` allows you to define **actions** that should occur at **regular intervals**, typically every frame of an animation. It provides a way to synchronize the visual representation of an application with the underlying logic or state changes.
+- `AnimationTimer` allows you to define **actions** that should occur at **regular intervals**, typically every frame of an animation. It provides a way to synchronize the visual representation of an application with the underlying logic or state changes.
+- The AnimationTimer class provides a **higher level of control** over animations compared to the Timeline class because it allows direct **frame-by-frame** manipulation of the scene.
 :::
 
 ## Key Components
@@ -32,7 +33,7 @@ In JavaFX, an <LinkOut href='https://openjfx.io/javadoc/23/javafx.graphics/javaf
 
 Here's a simple example of how to use `AnimationTimer`:
 
-```Java
+```java
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -80,11 +81,18 @@ public class AnimationTimerExample extends Application {
     }
 }
 ```
+
+:::tip
+- **Performance**: `AnimationTimer` calls `handle` as often as possible (typically around 60 times per second). Ensure that your updates are efficient to maintain performance.
+- **Delta time**: Use the time between frames (delta time) for smooth animations.
+- **Stopping the timer**: Call `stop()` on the `AnimationTimer` instance to stop the animation.
+:::
+
 ## Key Features
 
-- **Continuous Updates**: The `AnimationTimer` calls the `handle(long now)` method repeatedly, typically once per frame, allowing you to update your scene or perform calculations based on the current time.
+- **Continuous updates**: The `AnimationTimer` calls the `handle(long now)` method repeatedly, typically once per frame, allowing you to update your scene or perform calculations based on the current time.
 
-- **Frame rate independence**: Since `AnimationTimer` uses the current time in nanoseconds, you can adjust your animations based on the time elapsed between frames, ensuring smooth performance regardless of the frame rate.
+- **Frame rate independence**: Since `AnimationTimer` uses the current time in nanoseconds, you can adjust your animations based on the **time elapsed** between frames, ensuring smooth performance regardless of the frame rate.
 
 - **Simplicity**: It allows for easy implementation of animation loops without the need for complex timing logic or managing frame updates manually. Unlike other animation classes that require setting up keyframes, `AnimationTimer` allows for more flexible, programmatic animations.
 

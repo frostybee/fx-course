@@ -3,7 +3,7 @@ title: Understanding Frame Rate
 description: Understanding Frame Rate
 sidebar:
     label: "Frame Rate"
-    order: 4
+    order: 2
 ---
 
 ## What is Frame Rate?
@@ -13,3 +13,109 @@ sidebar:
 - **30 FPS**: Standard for television.
 - **60 FPS**: Standard for gaming and smooth animations.
 - **24 FPS**: Common in film.
+
+## Frame Rate Control
+
+:::note
+JavaFX doesn't allow you to directly set a frame rate for `AnimationTimer`, but you can control the effective frame rate by adjusting the logic inside the `handle` method.
+:::
+
+### Frame Concept in Animation
+
+- **Frames per Second (FPS)**: Animation is typically measured in frames per second (FPS). The smoother the animation, the higher the FPS. Most animations aim for a target of 60 FPS, which means each frame should ideally render within 16.67 milliseconds (1 second / 60 frames).
+
+- **Timing**: `AnimationTimer` does not run on a fixed timing interval; it will call the `handle` method as fast as the system allows, usually synchronized with the display's refresh rate. This means that the frame rate can fluctuate based on system performance.
+
+- **Frame Update Logic**: In your overridden `handle` method, you typically update the state of your application, such as moving objects, changing colors, or processing user input. This method is called repeatedly in a loop until you stop the timer.
+
+### How to Control Frame Rate
+
+1. **Time-Based Animation**: Use the `now` parameter to determine how much time has passed since the last frame. You can implement time-based animations that update positions or states based on the elapsed time.  
+
+    **For example**:
+     ```java
+     long lastUpdate  = 0;
+
+     @Override
+     public void handle(long now) {
+         if (lastUpdate  > 0) {
+             double deltaTime = (now - lastUpdate ) / 1_000_000_000.0; // convert nanoseconds to seconds
+            
+            // Use deltaTime for smooth updates
+             updateAnimation(deltaTime);
+         }
+         lastUpdate  = now;
+     }
+     ```
+
+2. **Frame Limiting**: You can limit the frame rate by checking the elapsed time and only performing updates at certain intervals. For instance, if you want to limit the frame rate to 60 FPS, you would update every ~16.67 milliseconds:  
+     ```java
+     long lastUpdate = System.nanoTime();
+
+     @Override
+     public void handle(long now) {
+         long currentTime = System.nanoTime();
+         if (currentTime - lastUpdate >= 16_666_667) { // 1/60 seconds in nanoseconds
+             updateAnimation();
+             lastUpdate = currentTime;
+         }
+     }
+     ```
+### Example
+
+Using the time between frames (delta time) to implement smooth animations.
+
+```java
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+
+public class MyAnimationApp extends Application {
+    @Override
+    public void start(Stage primaryStage) {
+        Circle circle = new Circle(20, Color.BLUE);
+        circle.setCenterX(100);
+        circle.setCenterY(100);
+
+        AnimationTimer timer = new AnimationTimer() {
+            private long lastUpdate = 0;
+
+            @Override
+            public void handle(long now) {
+                if (lastUpdate > 0) {
+                    double deltaTime = (now - lastUpdate) / 1_000_000_000.0; // Convert to seconds
+                    circle.setCenterX(circle.getCenterX() + 100 * deltaTime); // Move circle
+                }
+                lastUpdate = now;
+            }
+        };
+
+        timer.start();
+        
+        Scene scene = new Scene(new Group(circle), 400, 300);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("AnimationTimer Example");
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+
+## Best Practices for Using AnimationTimer
+
+- **Use Efficient Code**: Keep the logic in the `handle` method efficient. Heavy computations can lead to frame drops.
+   
+- **Use Delta Time**: Incorporate delta time in your animations for frame-independent movement. This ensures that your animations look consistent regardless of the frame rate.   
+
+- **Rendering**: Only update the UI components that need to change. Avoid unnecessary redraws.
+
+- **Avoid Blocking Operations**: Do not perform long-running tasks in the `handle` method. Instead, consider using background threads for heavy computations and update the UI on the JavaFX Application Thread.
+
+- **Testing on Different Hardware**: Test your animations on different machines to see how they perform under varying conditions. Frame rates can be affected by hardware capabilities.

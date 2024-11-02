@@ -3,7 +3,7 @@ title: Bouncing Ball App
 description: Animating a Bouncing Ball
 sidebar:
     label: "Bouncing Ball"
-    order: 2
+    order: 4
 ---
 
 The code below creates a simple JavaFX application that simulates a bouncing ball affected by gravity. The ball's vertical position is updated based on its velocity, which is influenced by gravity. When the ball reaches the bottom of the pane, it bounces back, losing some energy in the process.   
@@ -60,12 +60,12 @@ public class BouncingBallApp extends Application {
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                updateBall();
+                update();
             }
         }.start();
     }
 
-    private void updateBall() {
+    private void update() {
         // Apply gravity
         velocityY += gravity;
 
