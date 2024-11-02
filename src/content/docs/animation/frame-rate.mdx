@@ -63,42 +63,112 @@ JavaFX doesn't allow you to directly set a frame rate for `AnimationTimer`, but 
      ```
 ### Example
 
-Using the time between frames (delta time) to implement smooth animations.
+- Using the time between frames (delta time) to implement smooth animations.
+
+    ```java
+    import javafx.animation.AnimationTimer;
+    import javafx.application.Application;
+    import javafx.scene.Group;
+    import javafx.scene.Scene;
+    import javafx.scene.paint.Color;
+    import javafx.scene.shape.Circle;
+    import javafx.stage.Stage;
+
+    public class MyAnimationApp extends Application {
+        @Override
+        public void start(Stage primaryStage) {
+            Circle circle = new Circle(20, Color.BLUE);
+            circle.setCenterX(100);
+            circle.setCenterY(100);
+
+            AnimationTimer timer = new AnimationTimer() {
+                private long lastUpdate = 0;
+
+                @Override
+                public void handle(long now) {
+                    if (lastUpdate > 0) {
+                        double deltaTime = (now - lastUpdate) / 1_000_000_000.0; // Convert to seconds
+                        circle.setCenterX(circle.getCenterX() + 100 * deltaTime); // Move circle
+                    }
+                    lastUpdate = now;
+                }
+            };
+
+            timer.start();
+            
+            Scene scene = new Scene(new Group(circle), 400, 300);
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("AnimationTimer Example");
+            primaryStage.show();
+        }
+
+        public static void main(String[] args) {
+            launch(args);
+        }
+    }
+    ```
+## Monitoring Frame Rate
+
+:::tip
+To monitor frame rate, you need to track **how many frames** are rendered over a specific time period. Here's how you can implement this:
+
+1. **Initialization**: Set up counters and a timing mechanism.
+2. **Frame Counting**: Increment a frame counter in the `handle` method.
+3. **Timing**: Use the timestamp to determine when to calculate the average frame rate.
+:::
+
+### Example Implementation
+
+Here's a simple implementation to monitor the frame rate:
 
 ```java
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class MyAnimationApp extends Application {
+public class FrameRateMonitor extends Application {
+
+    private long lastTime = 0;
+    private int frameCount = 0;
+    private double frameRate = 0;
+
     @Override
     public void start(Stage primaryStage) {
-        Circle circle = new Circle(20, Color.BLUE);
-        circle.setCenterX(100);
-        circle.setCenterY(100);
-
+        Text frameRateText = new Text();
+        
         AnimationTimer timer = new AnimationTimer() {
-            private long lastUpdate = 0;
-
             @Override
             public void handle(long now) {
-                if (lastUpdate > 0) {
-                    double deltaTime = (now - lastUpdate) / 1_000_000_000.0; // Convert to seconds
-                    circle.setCenterX(circle.getCenterX() + 100 * deltaTime); // Move circle
+                if (lastTime > 0) {
+                    // Calculate elapsed time in seconds
+                    double elapsedTime = (now - lastTime) / 1_000_000_000.0; // convert to seconds
+                    frameCount++;
+
+                    // Update frame rate every second
+                    if (elapsedTime >= 1.0) {
+                        frameRate = frameCount / elapsedTime;
+                        frameRateText.setText(String.format("FPS: %.2f", frameRate));
+                        frameCount = 0; // reset for the next interval
+                        lastTime = now; // reset lastTime
+                    }
+                } else {
+                    // Initialize lastTime on first call
+                    lastTime = now;
                 }
-                lastUpdate = now;
+
+                // Update your application here (game logic, rendering, etc.)
             }
         };
 
         timer.start();
         
-        Scene scene = new Scene(new Group(circle), 400, 300);
+        StackPane root = new StackPane(frameRateText);
+        Scene scene = new Scene(root, 400, 300);
+        primaryStage.setTitle("Frame Rate Monitor");
         primaryStage.setScene(scene);
-        primaryStage.setTitle("AnimationTimer Example");
         primaryStage.show();
     }
 
@@ -107,6 +177,18 @@ public class MyAnimationApp extends Application {
     }
 }
 ```
+
+### Explanation of the Code
+
+1. **Variables**:
+   - `lastTime`: Tracks the last frame's timestamp.
+   - `frameCount`: Counts how many frames have been processed in the last second.
+   - `frameRate`: Stores the calculated frames per second (FPS).
+
+2. **AnimationTimer**:
+   - The `handle` method checks if `lastTime` has been initialized. If it has, it calculates the elapsed time since the last frame.
+   - The `frameCount` is incremented on each call.
+   - If one second has passed (i.e., `elapsedTime >= 1.0`), it calculates the frame rate, updates the display text, resets the count, and updates `lastTime`.
 
 ## Best Practices for Using AnimationTimer
 
