@@ -1,0 +1,139 @@
+---
+title: Working with Resources
+description: Working with Resources
+sidebar:
+    label: "Loading Resources"
+    order: 1
+---
+
+## **How to Load Resources?**
+
+In JavaFX, the `getClass().getResource()` method is commonly used to load resources like images, sound files, stylesheets, or FXML files from your project.
+ This method is **part of the Java standard library** and can help you access files located in your classpath. 
+
+### Understanding getClass().getResource()
+
+- **Resource path**: The argument you pass to `getResource()` is a path to the resource you want to load. This path can be **absolute** or **relative**:
+   - **Absolute Path**: Starts with a `/`, indicating it's rooted in the classpath.
+   - **Relative Path**: Doesn't start with a `/`, which means it's relative to the package of the class from which it is called.
+
+- **Returns**: The method returns a `URL` object pointing to the resource. If the resource cannot be found, it returns `null`.
+
+:::tip
+### Tips for Using getClass().getResource()
+
+1. **Check Paths**: Always verify your resource paths. If your resource is not found, double-check the directory structure and ensure the resource is included in the classpath.
+
+2. **Use toExternalForm()**: When loading images, it's often a good practice to convert the URL to a string using `toExternalForm()`, especially when working with methods that require a string input.
+
+3. **Package Structure**: Be mindful of your package structure when using relative paths. If you call `getClass().getResource("file.txt")` from a class in `org.example`, it will look for `org/example/file.txt`.
+
+4. **Exception Handling**: Wrap your resource loading code in try-catch blocks to handle potential `IOException` or `NullPointerException` if the resource is not found.
+:::
+
+## **Example Use Cases**
+
+### 1. Loading an Image
+
+Suppose you have an image named `icon.png` in the `src/main/resources/images` directory. Here's how you would load it in your JavaFX application:
+
+```java
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+public class ImageLoaderExample extends Application {
+    @Override
+    public void start(Stage primaryStage) {
+        // Load the image using getClass().getResource()
+        Image image = new Image(getClass().getResource("/images/icon.png").toExternalForm());
+        ImageView imageView = new ImageView(image);
+
+        StackPane root = new StackPane();
+        root.getChildren().add(imageView);
+
+        Scene scene = new Scene(root, 400, 300);
+        primaryStage.setTitle("Image Loader Example");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+
+### 2. Loading and Playing a Sound File
+
+Loading a sound file in JavaFX is quite similar to loading images or FXML files. You can use the `AudioClip` class for playing sound files, and `getClass().getResource()` to access the sound file from your resources.
+
+Suppose you have a sound file named `pew.mp3` located in the `src/main/resources/sounds` directory. Here's how you can load and play it:
+
+```java
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import javafx.scene.media.AudioClip;
+
+public class SoundLoaderExample extends Application {
+    @Override
+    public void start(Stage primaryStage) {
+        // Load the sound file using getClass().getResource()
+        AudioClip pewSound = new AudioClip(getClass().getResource("/sounds/pew.mp3").toExternalForm());
+
+        // Create a button to play the sound when clicked
+        Button playSoundButton = new Button("Play Sound");
+        playSoundButton.setOnAction(e -> pewSound.play());
+
+        StackPane root = new StackPane();
+        root.getChildren().add(playSoundButton);
+
+        Scene scene = new Scene(root, 300, 200);
+        primaryStage.setTitle("Sound Loader Example");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+### 3. Loading an FXML File
+
+To load an FXML file named `layout.fxml` located in the `src/main/resources/layouts` directory, you can do it like this:
+
+```java
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+public class FXMLLoaderExample extends Application {
+    @Override
+    public void start(Stage primaryStage) {
+        try {
+            // Load FXML file using getClass().getResource()
+            Parent root = FXMLLoader.load(getClass().getResource("/layouts/layout.fxml"));
+            Scene scene = new Scene(root);
+
+            primaryStage.setTitle("FXML Loader Example");
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```

@@ -81,6 +81,13 @@ export default defineConfig({
             autogenerate: {
               directory: "animation"
             }
+          },
+          {
+            label: "Canvas API",
+            collapsed: false,
+            autogenerate: {
+              directory: "drawing"
+            }
           }
         ]
       }),
