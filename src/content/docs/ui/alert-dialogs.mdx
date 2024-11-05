@@ -1,0 +1,103 @@
+---
+title: Alert Dialogs 
+description:  Working with Alert Dialogs
+sidebar:
+    label: "Alert Dialogs"
+    order: 3
+---
+
+# Working with Alert Dialogs in JavaFX
+
+:::note
+**Alert dialogs** are essential for communicating with users in JavaFX applications. They can display different types of messages, confirm actions, or gather input.
+:::
+
+## Types of Alert Dialogs
+:::tip
+1. **INFORMATION**: For non-critical messages (to inform users about something), often purely informational.
+2. **WARNING**: Warn users of potential issues, cautionary messages to prevent issues.
+3. **CONFIRMATION**: For actions requiring user confirmation (Yes/No).
+4. **ERROR**: For critical errors or issues.
+5. **NONE**: For custom dialogs without a default icon.
+6. **Text Input**: Gather user input.
+:::
+
+## Creating an Alert Dialog
+
+In JavaFX, `Alert` is a built-in class that provides various types of alert dialogs. These are useful for showing messages, confirmations, errors, and warnings to users in a JavaFX application. 
+
+### Basic Structure
+To create an alert dialog, you use the `Alert` class. 
+```java
+Alert alert = new Alert(Alert.AlertType.INFORMATION);
+alert.setTitle("Title");
+alert.setHeaderText("Header");
+alert.setContentText("This is the content.");
+```
+### Displaying the Alert
+To display the alert, use:
+```java
+alert.showAndWait();
+```
+This method blocks the application until the dialog is closed.
+
+**The main types of** `Alert` **dialogs in JavaFX are as follows:**
+
+1. **INFORMATION**:  
+   This type of alert is used to display informational messages to the user. It typically includes an information icon and is used when you want to convey a non-critical message to the user.
+
+   ```java
+   Alert alert = new Alert(Alert.AlertType.INFORMATION);
+   alert.setTitle("Information Dialog");
+   alert.setHeaderText("Information");
+   alert.setContentText("This is an information alert.");
+   alert.showAndWait();
+   ```
+
+2. **WARNING**:  
+   A warning alert is used to display warnings or cautionary messages that the user should be aware of. This type of alert is generally used to prevent potential issues, but it does not require immediate action.
+
+   ```java
+   Alert alert = new Alert(Alert.AlertType.WARNING);
+   alert.setTitle("Warning Dialog");
+   alert.setHeaderText("Warning");
+   alert.setContentText("This is a warning alert.");
+   alert.showAndWait();
+   ```
+
+3. **CONFIRMATION**:  
+   A confirmation alert is used when you need the user to confirm an action. It provides options like "OK" or "Cancel" to allow the user to proceed or cancel an operation.
+
+   ```java
+   Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+   alert.setTitle("Confirmation Dialog");
+   alert.setHeaderText("Confirmation Required");
+   alert.setContentText("Are you sure you want to proceed?");
+   Optional<ButtonType> result = alert.showAndWait();
+   if (result.isPresent() && result.get() == ButtonType.OK) {
+       // Handle the OK action
+   }
+   ```
+
+4. **ERROR**:  
+   This alert type is used to inform the user of an error or critical issue. It typically has an error icon and is used when an operation fails or when there is a serious problem.
+
+   ```java
+   Alert alert = new Alert(Alert.AlertType.ERROR);
+   alert.setTitle("Error Dialog");
+   alert.setHeaderText("Error");
+   alert.setContentText("An error has occurred.");
+   alert.showAndWait();
+   ```
+
+5. **NONE**:  
+   This type of alert does not display a predefined icon and is rarely used on its own. However, it can be useful for creating custom dialogs without the default look associated with information, warning, or error types.
+
+   ```java
+   Alert alert = new Alert(Alert.AlertType.NONE);
+   alert.setTitle("Custom Dialog");
+   alert.setHeaderText("Custom Header");
+   alert.setContentText("This is a custom alert without a default icon.");
+   alert.getButtonTypes().add(ButtonType.OK);
+   alert.showAndWait();
+   ```
