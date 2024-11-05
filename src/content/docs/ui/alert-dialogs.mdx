@@ -1,25 +1,33 @@
 ---
-title: Alert Dialogs 
+title: Working with Alert Dialogs in JavaFX
 description:  Working with Alert Dialogs
 sidebar:
     label: "Alert Dialogs"
     order: 3
 ---
 
-# Working with Alert Dialogs in JavaFX
-
 :::note
 **Alert dialogs** are essential for communicating with users in JavaFX applications. They can display different types of messages, confirm actions, or gather input.
 :::
 
 ## Types of Alert Dialogs
-:::tip
+
 1. **INFORMATION**: For non-critical messages (to inform users about something), often purely informational.
 2. **WARNING**: Warn users of potential issues, cautionary messages to prevent issues.
 3. **CONFIRMATION**: For actions requiring user confirmation (Yes/No).
 4. **ERROR**: For critical errors or issues.
 5. **NONE**: For custom dialogs without a default icon.
 6. **Text Input**: Gather user input.
+
+:::tip
+### Best Practices
+- **Clear messaging**: Keep messages concise and to the point.
+- **Relevance**: Ensure alerts are contextually relevant to the user's actions.
+- **Minimal usage**: Avoid excessive alerts that can overwhelm users.
+
+### Common Pitfalls
+- **Blocking UI**: Overusing `showAndWait()` can make the UI unresponsive.
+- **Neglecting user choices**: Always handle all possible user responses.
 :::
 
 ## Creating an Alert Dialog
@@ -75,7 +83,9 @@ This method blocks the application until the dialog is closed.
    alert.setContentText("Are you sure you want to proceed?");
    Optional<ButtonType> result = alert.showAndWait();
    if (result.isPresent() && result.get() == ButtonType.OK) {
-       // Handle the OK action
+       // User clicked OK
+   } else {
+       // User clicked Cancel
    }
    ```
 
@@ -101,3 +111,24 @@ This method blocks the application until the dialog is closed.
    alert.getButtonTypes().add(ButtonType.OK);
    alert.showAndWait();
    ```
+## Example: Text Input Dialog
+```java
+TextInputDialog inputDialog = new TextInputDialog();
+inputDialog.setTitle("Input");
+inputDialog.setHeaderText("Enter your name:");
+Optional<String> name = inputDialog.showAndWait();
+
+name.ifPresent(value -> System.out.println("User's name: " + value));
+```
+
+## Customizing Alert Dialogs
+You can customize **buttons** and **styles**:
+
+```java
+Alert customAlert = new Alert(Alert.AlertType.WARNING);
+customAlert.setTitle("Custom Alert");
+customAlert.setHeaderText("Choose an option");
+customAlert.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL, new ButtonType("Custom"));
+
+customAlert.showAndWait();
+```   
