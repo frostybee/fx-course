@@ -88,6 +88,13 @@ export default defineConfig({
             autogenerate: {
               directory: "drawing"
             }
+          },
+          {
+            label: "FAQ",
+            collapsed: false,
+            autogenerate: {
+              directory: "faq"
+            }
           }
         ]
       }),

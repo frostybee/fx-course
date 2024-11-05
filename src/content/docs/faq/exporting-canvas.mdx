@@ -1,0 +1,161 @@
+---
+title: Exporting Canvas Drawing
+description:  Working with Images in JavaFX
+sidebar:
+    label: "Exporting a Canvas"
+    order: 1
+---
+
+## Exporting Canvas Drawing to a PNG File
+
+In JavaFX, if you are working with a `Canvas` and you want to export the drawing on that canvas into a **PNG file**, you can do so by converting the content of the `Canvas` to a `WritableImage` and then writing that image to a file. Here's how you can do it:
+
+:::note
+## Steps:
+1. Add the `javafx.swing` module to the list of modules in the `javafx` section of your `build.gradle` file. The list of modules should be:   
+    `modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.graphics',  'javafx.media', 'javafx.swing' ]`
+2. Create a `WritableImage` that is the same size as the canvas.
+3. Use the `Canvas`'s `snapshot` method to render its contents to the `WritableImage`.
+4. Use `ImageIO` to save the `WritableImage` to a PNG file.
+:::
+
+## Code Example:
+
+The following code will allow you to save any drawing made on the canvas to a PNG file. It uses the `FileChooser` class to allow the user to select the location where the image file should be saved.
+
+:::tip
+- Ensure you have the necessary imports for handling both JavaFX and AWT (specifically `javafx.embed.swing.SwingFXUtils` and `ImageIO`).
+- You can adjust the file name and path as needed.
+:::
+
+### Running the Code:
+When you run the application, you can **click anywhere** on the canvas to trigger the export. It will save the content of the canvas to a file named `canvasDrawing.png` in the directory the user selected.
+
+```java
+import javafx.application.Application;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.embed.swing.SwingFXUtils;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+public class CanvasToPng extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
+        // Create a canvas and get its graphics context
+        Canvas canvas = new Canvas(400, 400);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        // Draw something on the canvas (example: a red circle)
+        gc.setFill(Color.RED);
+        gc.fillOval(100, 100, 200, 200);
+
+        // When clicked, export the canvas to a PNG file via the file chooser
+        canvas.setOnMouseClicked(event -> exportCanvasToPng(primaryStage, canvas));
+
+        // Set up the scene and stage
+        StackPane root = new StackPane();
+        root.getChildren().add(canvas);
+        Scene scene = new Scene(root, 400, 400);
+        primaryStage.setTitle("Canvas to PNG Example");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    /**
+     * Exports the content of a JavaFX canvas to a PNG image file. This method
+     * opens a file chooser dialog to let the user specify where to save the
+     * image. It captures the content of the provided canvas, converts it to an
+     * image, and saves it as a PNG file to the selected location.
+     *
+     * @param ownerStage The primary stage of the application. This is used to
+     * show the file chooser dialog.
+     * @param canvas The Canvas object whose content is to be exported as a PNG
+     * image. This canvas is rendered to an image and saved to the user's
+     * selected file location.
+     */
+    private void exportCanvasToPng(Stage ownerStage, Canvas canvas) {
+        // Open the file chooser and get the selected file path
+        File selectedFile = openFileChooser(ownerStage);
+
+        if (selectedFile != null) {
+            // Create a WritableImage with the same dimensions as the canvas
+            WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
+
+            // Capture the content of the canvas into the WritableImage
+            canvas.snapshot(null, writableImage);
+
+            // Convert the WritableImage to a BufferedImage
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(writableImage, null);
+
+            // Save the BufferedImage to the file (PNG format)
+            try {
+                ImageIO.write(bufferedImage, "PNG", selectedFile);
+                System.out.println("Image saved to: " + selectedFile.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Opens a file chooser dialog for saving a file. The dialog allows the user
+     * to select a directory and specify a file name for saving. It also filters
+     * the file types to allow saving of image files (PNG, JPG, GIF) and text
+     * files (TXT). The initial directory for the file chooser is set to the
+     * user's Desktop, or if the Desktop is unavailable, the user's home
+     * directory is used instead.
+     *
+     * @param ownerStage The primary stage used to open the file chooser. This
+     * is typically the main window of the JavaFX application.
+     * @return The selected file, or {@code null} if the user cancels the file
+     * selection.
+     */
+    private File openFileChooser(Stage ownerStage) {
+        FileChooser fileChooser = new FileChooser();
+        // Add file filters (optional)
+        FileChooser.ExtensionFilter textFilter = new FileChooser.ExtensionFilter("Text Files", "*.txt");
+        FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif");
+        fileChooser.getExtensionFilters().addAll(imageFilter, textFilter);
+        fileChooser.setInitialFileName("canvasDrawing.png");  // Default file name
+
+        // Set the initial directory of the FileChooser to the user's Desktop
+        File desktopDirectory = new File(System.getProperty("user.home"), "Desktop");
+        if (desktopDirectory.exists() && desktopDirectory.isDirectory()) {
+            fileChooser.setInitialDirectory(desktopDirectory);
+        } else {
+            // Fallback to the user's home directory if Desktop is unavailable
+            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        }
+
+        // Show the file chooser and get the selected file
+        return fileChooser.showSaveDialog(ownerStage);
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+
+## Notes:
+
+1. **Canvas**: A `Canvas` is used to perform drawing. In this example, we draw a red circle, but you can replace this with whatever content you want to draw on the canvas.
+   
+2. **snapshot()**: This method of the `Canvas` is used to capture its current visual state into a `WritableImage`. The `snapshot` method renders the canvas content into a `WritableImage`, which can be further processed or saved as an image file.
+
+3. **WritableImage**: A `WritableImage` is an image buffer into which the canvas content is copied. It holds pixel data that can be converted into other formats like `BufferedImage`.
+
+4. **SwingFXUtils.fromFXImage()**: This utility method converts a `WritableImage` (JavaFX image) into a `BufferedImage` (Java AWT image), which is compatible with the `ImageIO.write()` method for saving the image.
+
+5. **ImageIO.write()**: This method from the `javax.imageio` package writes the `BufferedImage` to a file in PNG format.

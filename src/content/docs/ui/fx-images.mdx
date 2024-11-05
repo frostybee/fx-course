@@ -1,0 +1,207 @@
+---
+title: Working with Images in JavaFX
+description:  Working with Images in JavaFX
+sidebar:
+    label: "Working with Images"
+    order: 4
+---
+
+JavaFX provides a rich set of tools for creating graphical user interfaces, and working with images is a common task when developing desktop applications. Whether you want to display images in your user interface, process them, or animate them, JavaFX offers several classes and APIs to achieve this.
+
+This guide covers how to work with images in JavaFX, starting with the basics and moving through more advanced topics such as image processing and animation.
+
+:::tip
+- Working with images in JavaFX is straightforward once you understand how to load, display, and manipulate them. By leveraging `Image` and `ImageView`, combined with advanced features like pixel manipulation and animations, you can create rich and interactive visual applications.
+
+- With `getClass().getResource()`, you can reliably load images from your project resources without worrying about **absolute file paths**, making your code more portable and maintainable.
+:::
+
+## Handling Different Image Formats
+:::note
+JavaFX supports a variety of image formats, including:
+- **JPEG, PNG, GIF, BMP, TIFF**
+
+You can load and display any of these formats using the `Image` class, as shown blew. Make sure the **file path** or URL points to a **valid image format**.
+:::
+
+
+## Loading and Displaying Images
+
+### Loading Images with `Image`
+
+To load an image, you use the `Image` class from the `javafx.scene.image` package. This class allows you to load an image from a file, URL, or input stream.
+
+When loading resources from your project (for example, an image in your `resources` folder), it's more robust and portable to use `getClass().getResource()` rather than hardcoding file paths.
+
+Here's how you can load an image from the resources folder:
+
+```java
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+
+public class ImageExample extends Application {
+    @Override
+    public void start(Stage primaryStage) {
+        // Load an image from the resources folder using getClass().getResource()
+        Image image = new Image(getClass().getResource("/images/invader.png").toExternalForm());
+
+        // Create an ImageView to display the image
+        ImageView imageView = new ImageView(image);
+        
+        // Set the size of the image
+        imageView.setFitWidth(300);
+        imageView.setFitHeight(200);
+        
+        // Create a scene and add the ImageView
+        Scene scene = new Scene(imageView);
+        
+        primaryStage.setTitle("JavaFX Image Example");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+
+- **Resource Path**: The image is located in the `/images` folder within your `resources` directory. `getClass().getResource("/images/invader.png")` loads the image as a resource, and `.toExternalForm()` converts it into a URL format that the `Image` class can handle.
+  
+If the image is in the same package as your class, you can load it like this:
+```java
+Image image = new Image(getClass().getResource("invader.png").toExternalForm());
+```
+
+### Displaying Images with `ImageView`
+
+Once you have an `Image` object, you can display it in your JavaFX application using an `ImageView`. The `ImageView` is a special `Node` that can display images within a scene.
+
+You can modify properties like the width, height, or opacity of the image using the `ImageView` object.
+
+```java
+imageView.setFitWidth(200);  // Resize the width of the image
+imageView.setFitHeight(100); // Resize the height of the image
+imageView.setPreserveRatio(true);  // Preserve the aspect ratio of the image
+```
+
+## Manipulating Images
+
+### Resizing Images
+
+The `ImageView` provides methods like `setFitWidth()` and `setFitHeight()` to control the size of an image. If you want to preserve the aspect ratio when resizing, use `setPreserveRatio(true)`.
+
+Example:
+```java
+imageView.setFitWidth(300);
+imageView.setFitHeight(200);
+imageView.setPreserveRatio(true);  // Ensures the aspect ratio is maintained
+```
+
+### Cropping Images
+
+To crop an image, you can create a `Region` that clips the image. JavaFX doesn't provide a direct API to crop images, but you can work around this by using a `Clip` or manipulating the image pixels directly.
+
+Example:
+```java
+Rectangle clip = new Rectangle(50, 50, 100, 100);  // Clip to a specific region
+imageView.setClip(clip);
+```
+
+This code will clip the `ImageView` to a rectangle starting at (50, 50) and having a width and height of 100 pixels.
+
+### Adjusting Image Transparency
+
+JavaFX allows you to adjust the opacity of an image using the `ImageView` object’s `setOpacity()` method.
+
+```java
+imageView.setOpacity(0.5); // Make the image semi-transparent
+```
+
+Values range from `0.0` (completely transparent) to `1.0` (completely opaque).
+
+## Image Processing with JavaFX
+
+### Creating Image Filters
+
+To apply filters (like grayscale, blur, etc.), JavaFX has a `PixelReader` and `PixelWriter` for low-level image manipulation. You can read and write pixel data to manipulate images.
+
+Example of creating a grayscale filter:
+```java
+Image image = new Image(getClass().getResource("/images/example.jpg").toExternalForm());
+WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+PixelReader pixelReader = image.getPixelReader();
+PixelWriter pixelWriter = writableImage.getPixelWriter();
+
+for (int y = 0; y < image.getHeight(); y++) {
+    for (int x = 0; x < image.getWidth(); x++) {
+        Color color = pixelReader.getColor(x, y);
+        double gray = color.getRed() * 0.2989 + color.getGreen() * 0.5870 + color.getBlue() * 0.1140;
+        Color grayColor = new Color(gray, gray, gray, color.getOpacity());
+        pixelWriter.setColor(x, y, grayColor);
+    }
+}
+
+// Display the processed image
+ImageView imageView = new ImageView(writableImage);
+```
+
+This code converts an image to grayscale by calculating the luminance of each pixel.
+
+### Image Manipulation (Pixel Access)
+
+For more advanced image processing, you can access individual pixels using `PixelReader` and manipulate them directly.
+
+```java
+PixelReader reader = image.getPixelReader();
+Color color = reader.getColor(10, 10);  // Get the color of the pixel at (10, 10)
+```
+
+This allows you to create custom filters or transformations based on pixel values.
+
+## Animating Images
+
+### Simple Image Transitions
+
+You can animate images using the `TranslateTransition`, `FadeTransition`, or other transition classes in JavaFX.
+
+For example, fading an image in:
+
+```java
+FadeTransition fadeTransition = new FadeTransition(Duration.seconds(2), imageView);
+fadeTransition.setFromValue(0.0);
+fadeTransition.setToValue(1.0);
+fadeTransition.play();
+```
+
+### Animation with `ImageView` and `KeyFrame`
+
+To animate an image (e.g., moving an image), use `Timeline` with `KeyFrame`:
+
+```java
+Timeline timeline = new Timeline(
+    new KeyFrame(Duration.ZERO, new KeyValue(imageView.translateXProperty(), 0)),
+    new KeyFrame(Duration.seconds(5), new KeyValue(imageView.translateXProperty(), 500))
+);
+timeline.play();
+```
+
+This animates the `ImageView`'s `translateX` property over 5 seconds.
+
+## Saving Images
+
+JavaFX doesn’t provide a direct API for saving images, but you can use `PixelReader` and `PixelWriter` to manually save images by reading pixel data and writing it to an output stream.
+
+Alternatively, for simple saving, you can use the `BufferedImage` class (from `javax.imageio.ImageIO`) to save an image:
+
+```java
+Buffered
+
+Image bufferedImage = SwingFXUtils.fromFXImage(image, null);
+ImageIO.write(bufferedImage, "png", new File("output.png"));
+```
+
+This requires converting the JavaFX `Image` to a `BufferedImage` and then saving it with `ImageIO`.
