@@ -1,0 +1,185 @@
+---
+title: Drawing with JavaFX Canvas 
+description: Drawing with JavaFX Canvas 
+sidebar:
+    label: "JavaFX Canvas"
+    order: 1
+---
+import { Aside } from '@astrojs/starlight/components';
+import LinkOut from '../../../components/LinkOut.astro'
+
+## Introduction to JavaFX Canvas
+
+JavaFX <LinkOut href='https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/canvas/Canvas.html'>`Canvas`</LinkOut> is a node for rendering **custom graphics** and **animations**. However, unlike other `Node` subclasses, it has **no graphical content** by default. All graphics are rendered manually through a `GraphicsContext` object, which you obtain from the `Canvas`. The <LinkOut href='https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/canvas/GraphicsContext.html'>`GraphicsContext`</LinkOut> provides <LinkOut href='https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/canvas/GraphicsContext.html#method-summary'>`various methods`</LinkOut> for drawing shapes, text, images, other graphical elements.
+
+<Aside type="note" title="Basic Structure:">
+- **Canvas** - The drawing surface where you can render shapes, text, and images. 
+- **GraphicsContext** - The object used to perform the drawing operations on the canvas.
+</Aside>
+
+
+## Setting Up the Canvas
+
+### Step 1: Create a Canvas Object
+
+To use `Canvas` in JavaFX, you first need to create a `Canvas` object by specifying its **width** and **height** and add it to a layout, like a `Pane`, `StackPane` or `Group`. 
+
+Here's how to create a simple canvas:
+```java
+// Canvas with width 400px and height 400px
+Canvas canvas = new Canvas(400, 400); 
+```
+### Step 2: Access the GraphicsContext
+
+Once the canvas is created, you can retrieve its `GraphicsContext` object, which is the tool used for drawing. You access it via the `getGraphicsContext2D()` method:
+
+```java
+GraphicsContext gc = canvas.getGraphicsContext2D();
+```
+### Step 3: Add Canvas to the Scene
+Now that you have a `Canvas` and a `GraphicsContext`, add the canvas to a  scene graph. Note that a `Canvas` can be added to an FXML layout file (using Scene Builder).
+
+## Clearing and Redrawing the Canvas
+To clear a part of the canvas or the entire canvas, use `clearRect()` method of `GraphicsContext`. For dynamic drawing, you can clear and redraw based on user input or animation.
+
+```java
+// Clear the entire canvas
+gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+// Redraw the shapes or update the content
+drawShapes(gc);
+```
+
+## **Handling Mouse Events**
+
+You can handle mouse events on the canvas, such as mouse clicks or movement. Below is an example where the user can click on the canvas, and a circle will be drawn at the clicked position.
+
+```java
+canvas.setOnMouseClicked(e -> {
+    gc.setFill(Color.BLACK);
+    gc.fillOval(e.getX() - 20, e.getY() - 20, 40, 40); // Draw circle at mouse click
+});
+```
+## Drawing Basic Shapes
+:::tip
+`GraphicsContext` provides methods to draw various shapes such as lines, rectangles, circles, and ovals. Each method typically has **two versions**: one for drawing a **filled shape** and one for drawing an **outline**.
+:::
+
+### Drawing a Line
+
+To draw a line, you can use the `strokeLine()` method of `GraphicsContext`. It requires the starting and ending coordinates of the line:
+
+```java
+gc.setStroke(Color.BLACK); // Set the line color to black
+gc.setLineWidth(2); // Set the line width
+gc.strokeLine(50, 50, 350, 350); // Draw a line from (50,50) to (350,350)
+```
+### Drawing a Rectangle
+
+To draw a rectangle, use the `strokeRect()` or `fillRect()` methods. The difference is that `fillRect()` fills the rectangle with a color, while `strokeRect()` only outlines it.
+
+```java
+// Outline rectangle
+gc.setStroke(Color.RED);
+gc.setLineWidth(3);
+gc.strokeRect(50, 50, 100, 150); // (x, y, width, height)
+
+// Filled rectangle
+gc.setFill(Color.GREEN);
+gc.fillRect(200, 50, 100, 150); // (x, y, width, height)
+```
+### Drawing Rounded Rectangles
+
+To draw a rectangle with rounded corners, use `fillRoundRect` or `strokeRoundRect`.
+
+```java
+gc.setFill(Color.GREEN);
+gc.fillRoundRect(100, 100, 120, 80, 20, 20);  // Round corners (arc width = 20, arc height = 20)
+```
+### Drawing Circles and Ovals
+To draw a circle, use the `strokeOval()` or `fillOval()` methods. The circle's **bounding box** is defined by the top-left corner and its width and height (which will be equal for a perfect circle).
+
+```java
+// Outline circle
+gc.setStroke(Color.BLUE);
+gc.setLineWidth(2);
+gc.strokeOval(50, 250, 100, 100); // (x, y, width, height)
+
+// Filled circle
+gc.setFill(Color.YELLOW);
+gc.fillOval(200, 250, 100, 100); // (x, y, width, height)
+```
+### Drawing an Arc
+
+You can draw an arc (slice of a circle) using the `strokeArc()` or `fillArc()` methods. It requires the x and y coordinates for the bounding box, width, height, the starting angle, and the length of the arc.
+
+```java
+gc.setStroke(Color.PURPLE);
+gc.setLineWidth(3);
+gc.strokeArc(50, 50, 100, 100, 0, 90, ArcType.OPEN); // Draws a quarter circle
+
+// Draw a filled arc (from startAngle to arcExtent, in degrees)
+gc.setFill(javafx.scene.paint.Color.RED);
+gc.fillArc(50, 50, 100, 100, 0, 90, javafx.scene.shape.ArcType.ROUND);
+
+gc.setFill(Color.ORANGE);
+gc.fillArc(200, 50, 100, 100, 45, 90, ArcType.CHORD); // Draws a filled chord
+```
+### Drawing a Polygon and Polylines
+
+To draw a polygon, you can use the `strokePolygon()` or `fillPolygon()` methods. These methods take **an array** of x-coordinates and y-coordinates to form the vertices of the polygon.
+
+```java
+double[] xPoints = {150, 200, 250, 200};
+double[] yPoints = {350, 300, 350, 400};
+
+gc.setStroke(Color.BROWN);
+gc.setLineWidth(3);
+gc.strokePolygon(xPoints, yPoints, 4); // Draws a polygon with 4 points
+
+gc.setFill(Color.CYAN);
+gc.fillPolygon(xPoints, yPoints, 4); // Fills the polygon with cyan color
+```
+**Polylines**
+
+A polyline is similar to a polygon but does not connect the last point to the first. Example:
+
+```java
+double[] xPoints = {50, 150, 250, 350};
+double[] yPoints = {300, 200, 300, 200};
+gc.setStroke(Color.BROWN);
+gc.strokePolyline(xPoints, yPoints, 4);  // Open polyline
+```
+### Drawing Text
+
+You can also draw text using the `fillText()` and `strokeText()` methods.
+
+```java
+gc.setFill(Color.BLACK);
+gc.setFont(new Font("Arial", 24));
+gc.fillText("Hello, JavaFX!", 100, 100);  // Text with filling
+
+gc.setStroke(Color.RED);
+gc.setLineWidth(2);
+gc.strokeText("Stroke Text", 50, 100); // Text with stroke outline
+```
+
+### Using Gradients
+
+JavaFX also supports gradients for fills. You can use `LinearGradient` or `RadialGradient` for more complex fill effects.
+
+```java
+// Linear Gradient
+LinearGradient linearGradient = new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT, 
+    new Stop(0, Color.RED), new Stop(1, Color.BLUE));
+gc.setFill(linearGradient);
+gc.fillRect(50, 50, 300, 100); // Apply gradient to the rectangle
+
+// Radial Gradient
+RadialGradient radialGradient = new RadialGradient(0, 0, 0.5, 0.5, 0.5, true, CycleMethod.REFLECT, 
+    new Stop(0, Color.YELLOW), new Stop(1, Color.GREEN));
+gc.setFill(radialGradient);
+gc.fillOval(50, 200, 200, 200); // Apply radial gradient to the circle
+```
+
+
