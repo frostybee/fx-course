@@ -1,0 +1,173 @@
+---
+title: Working with Color in JavaFX
+description: Working with Color in JavaFX
+sidebar:
+    label: "FX Colors"
+    order: 4
+---
+
+## 1. **Basic Color Creation**
+
+JavaFX uses the `Color` class from the `javafx.scene.paint` package to represent colors. You can create colors in a variety of ways:
+
+### 1.1 **Predefined Colors**
+
+JavaFX comes with a number of predefined color constants in the `Color` class. You can use these constants directly without needing to specify RGB values.
+
+```java
+import javafx.scene.paint.Color;
+
+Color red = Color.RED;
+Color blue = Color.BLUE;
+Color green = Color.GREEN;
+```
+
+### 1.2 **RGB Color**
+
+You can define colors using RGB (Red, Green, Blue) values. Each component is a floating-point number between 0.0 and 1.0.
+
+```java
+// RGB: (0.8, 0.2, 0.4)
+Color color = Color.color(0.8, 0.2, 0.4);
+```
+
+### 1.3 **Hexadecimal Color**
+
+Colors can be specified using a hexadecimal string, starting with `#`, followed by 6 hexadecimal digits (e.g., `#RRGGBB`).
+
+```java
+// Hexadecimal color
+Color color = Color.web("#FF5733");  
+```
+
+### 1.4 **HSB/HSV Color**
+
+You can define colors using the Hue-Saturation-Brightness (HSB) model. This is particularly useful when you want to generate colors dynamically based on hue or saturation.
+
+```java
+// HSB: Hue = 120°, Saturation = 75%, Brightness = 50%
+Color color = Color.hsb(120, 0.75, 0.5);  
+```
+
+- **Hue**: The color type, expressed as an angle in degrees (0° to 360°).
+- **Saturation**: The intensity of the color (0.0 to 1.0).
+- **Brightness**: The brightness of the color (0.0 to 1.0).
+
+---
+
+## 2. **Using Colors in JavaFX UI Components**
+
+Once you've defined a color, you can apply it to various JavaFX components like shapes, backgrounds, and text.
+
+### 2.1 **Setting Color of Shapes**
+
+To set the color of a shape, you use the `setFill()` method for solid color fill or `setStroke()` for outline color.
+
+```java
+import javafx.scene.shape.Circle;
+import javafx.scene.paint.Color;
+
+Circle circle = new Circle(50, 50, 40);
+circle.setFill(Color.GREEN);   // Filling the circle with green color
+circle.setStroke(Color.BLACK); // Outline the circle with black color
+```
+
+### 2.2 **Setting Color of Text**
+
+You can apply color to text using the `setFill()` method on a `Text` object.
+
+```java
+import javafx.scene.text.Text;
+import javafx.scene.paint.Color;
+
+Text text = new Text(100, 100, "Hello JavaFX!");
+text.setFill(Color.PURPLE);  // Setting the text color to purple
+```
+
+### 2.3 **Setting Background Color**
+
+For setting background colors, you typically apply colors to layout containers like `Pane`, `StackPane`, or `Region`.
+
+```java
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+
+StackPane pane = new StackPane();
+pane.setStyle("-fx-background-color: #FF6347;"); // Using CSS to set background color
+```
+
+Alternatively, you can use `Background` and `BackgroundFill` classes for more advanced control over the background.
+
+```java
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.paint.Color;
+import javafx.geometry.Insets;
+
+BackgroundFill fill = new BackgroundFill(Color.CYAN, null, null);
+Background background = new Background(fill);
+pane.setBackground(background);
+```
+
+---
+
+## 3. **Manipulating Colors**
+
+### 3.1 **Creating Semi-transparent Colors (Alpha Channel)**
+
+Colors in JavaFX also support an alpha channel, which controls the opacity of a color. The alpha value ranges from 0.0 (fully transparent) to 1.0 (fully opaque).
+
+```java
+Color color = Color.rgb(255, 0, 0, 0.5); // Red with 50% opacity
+```
+
+### 3.2 **Blending Colors**
+
+JavaFX does not provide direct blending APIs for colors, but you can simulate blending using color manipulation techniques, such as averaging RGB values. Alternatively, you can use external libraries that provide advanced blending.
+
+### 3.3 **Color Adjustments**
+
+You can adjust properties of a color, such as brightness or saturation, using methods like `brighter()`, `darker()`, or `saturate()`.
+
+```java
+Color color = Color.BLUE;
+Color brighterBlue = color.brighter();  // Lightens the blue color
+Color darkerBlue = color.darker();     // Darkens the blue color
+```
+
+---
+
+## 4. **Working with Gradients**
+
+JavaFX provides two types of gradients: **linear gradients** and **radial gradients**. These gradients can be used to fill shapes or backgrounds with smooth transitions between colors.
+
+### 4.1 **Linear Gradient**
+
+A linear gradient is a color transition along a straight line.
+
+```java
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.geometry.Point2D;
+
+LinearGradient gradient = new LinearGradient(0, 0, 1, 1, true, null,
+    new Stop(0, Color.RED),
+    new Stop(1, Color.BLUE));
+```
+
+### 4.2 **Radial Gradient**
+
+A radial gradient transitions from a central point outward.
+
+```java
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
+
+RadialGradient gradient = new RadialGradient(0, 0, 0.5, 0.5, 0.5, true, null,
+    new Stop(0, Color.YELLOW),
+    new Stop(1, Color.GREEN));
+```
+
+You can apply these gradients in the same way as solid colors to the `setFill()` method.
+
+---
