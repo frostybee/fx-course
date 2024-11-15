@@ -1,0 +1,89 @@
+---
+title: Adding adding a Background Image in JavaFX
+description:  Working with Images in JavaFX
+sidebar:
+    label: "Background Image"
+    order: 5
+---
+In JavaFX, you can add a background image to a container (like a `Pane`, `VBox`, `HBox`, `StackPane`, etc.) by using a `Background` object, which contains a `BackgroundImage` that specifies the image and its properties. 
+
+## Steps:
+
+1. Load the image (using `Image` or `ImageView`).
+2. Create a `BackgroundImage` object with the image and desired properties.
+3. Set the `BackgroundImage` to the container's `Background` property.
+
+## Example Code:
+Here's an example of how to add a background image to a container in JavaFX.
+
+:::tip
+- Make sure the image path is correct and accessible (use a **relative path** if the image is stored locally).
+- Adjust the `BackgroundSize` and `BackgroundRepeat` to suit your specific layout needs.
+:::
+
+```java
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
+public class BackgroundImageExample extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
+
+        // Load the background image
+        Image backgroundImage = new Image(getClass().getResource("/images/briefcase.png").toExternalForm());
+
+        // Create a BackgroundImage with the image and desired properties
+        BackgroundImage bgImage = new BackgroundImage(
+                backgroundImage,
+                javafx.scene.layout.BackgroundRepeat.NO_REPEAT,
+                javafx.scene.layout.BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                BackgroundSize.DEFAULT
+        );
+
+        // Create a container (e.g., Pane, StackPane) and set its background
+        Pane root = new Pane();
+        root.setBackground(new Background(bgImage));
+
+        Label label = new Label("Hello, JavaFX is cool!");
+        root.getChildren().add(label);
+
+        // Set up the scene
+        Scene scene = new Scene(root, 800, 600);
+        primaryStage.setTitle("Background Image Example");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+
+## How it Works:
+
+1. **Image:** The `Image` class is used to load the image. The image can be loaded from a file (e.g., `getClass().getResource("/images/briefcase.png").toExternalForm()`) or a URL (e.g., `"http://api.cat.com/catimage.jpg"`).
+   
+2. **BackgroundImage:** This object specifies how the background image should be displayed. It takes the following parameters:
+   - The image itself (`Image` object).
+   - `BackgroundRepeat` enum (controls whether the image should repeat vertically, horizontally, or not repeat).
+   - `BackgroundPosition` enum or `Pos` (specifies the alignment of the image in the container).
+   - `BackgroundSize` enum (defines the scaling of the image).
+
+3. **Container (e.g., `Pane`):** The background image is applied to a container (in this case, a `Pane`) via the `setBackground()` method.
+
+## Customization:
+- **Scaling the image:** You can use `BackgroundSize` to control the scaling behavior of the image. For example, `new BackgroundSize(100, 100, true, true, true, false)` scales the image to 100% of the width and height.
+- **Positioning:** The `BackgroundPosition` parameter allows you to control where the image is placed. For example, `Pos.CENTER` places the image in the center of the container.
+- **Repeat:** You can control whether the image repeats in the x and y directions using `BackgroundRepeat`.
+
