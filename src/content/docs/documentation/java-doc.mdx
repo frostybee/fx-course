@@ -1,0 +1,217 @@
+---
+title: Documenting Code with JavaDoc
+description: Documenting Code with JavaDoc
+sidebar:
+    label: "Using JavaDoc"
+    order: 1
+---
+
+Documenting Java code with **Javadoc** is an essential practice that helps other developers (or even your future self) understand how your code works and how to use it. Javadoc comments are used to generate external API documentation, which is valuable for building maintainable, readable code. This guide will cover the syntax of Javadoc, the different tags, and provide comprehensive examples demonstrating how to use them effectively.
+
+## Best Practices for Writing Javadoc Comments
+:::tip
+- **Be clear and concise**: Write clear, concise, and understandable descriptions. Avoid unnecessary technical jargon or overly detailed explanations unless they are needed.
+- **Use proper grammar**: Javadoc comments are public-facing, so they should be written with proper grammar and punctuation.
+- **Provide examples**: If applicable, include example usage of the class or method in a `<pre>` block to show how it should be used.
+- **Document exceptions**: Always document any exceptions that can be thrown by a method, especially if they are checked exceptions.
+- **Keep Javadoc updated**: Ensure your Javadoc comments are updated as your code changes. Out-of-date documentation is worse than no documentation.
+:::
+
+## Javadoc Basics
+
+Javadoc comments are written using a special syntax: they start with `/**` and end with `*/`. These comments can be placed above classes, methods, fields, constructors, and other elements to document their purpose, behavior, and usage.
+
+## Basic Example of a Javadoc Comment
+
+### Example of a Javadoc Comment:
+
+```java
+/**
+ * This class represents a simple calculator with basic arithmetic operations.
+ * It supports addition, subtraction, multiplication, and division.
+ * 
+ * Example usage:
+ * <pre>
+ *     Calculator calc = new Calculator();
+ *     int sum = calc.add(2, 3);
+ * </pre>
+ */
+public class Calculator {
+    
+    /**
+     * Adds two integers.
+     * 
+     * @param a the first number to add
+     * @param b the second number to add
+     * @return the sum of a and b
+     */
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+```
+## Structure of Javadoc Comments
+
+Javadoc tags are annotations within Javadoc comments that provide additional structure and information. Here are the most commonly used tags:
+### Description
+
+The main body of the comment should describe the purpose and functionality of the class, method, or field. Be concise but descriptive.
+
+### JavaDoc Tags:
+
+- **`@param`**: The `@param` tag documents the parameters a method accepts. Each parameter should be explained, including its type and purpose.
+- **`@return`**: The `@return` tag documents what a method returns. It should describe the return type and what the return value represents.
+- **`@throws`** or **`@exception`**: The `@throws` or `@exception` tag documents the exceptions a method can throw. Use this tag if the method can throw checked exceptions.
+- **`@see`**: provides references to related classes or methods, helping users of the API to find relevant information.
+- **`@deprecated`**: Marks methods or classes that are no longer recommended for use.
+- **`@since`**: Indicates the version in which a class or method was introduced.
+- **`@author`**: Specifies the author of the code.
+- **`@version`**: Specifies the version of the code.
+- **`@link`**: Embeds a link in the generated documentation.
+- **`@serial`**: Documents fields that are serialized.
+
+## Documenting Classes
+
+Javadoc comments for classes should explain the class's purpose, any important design considerations, and typical usage.   
+
+The `@author` tag is used to specify the author of a class, and the `@version` tag specifies the version of the class or package.
+
+### Example with `@author`, `@version`, and `@since`:
+
+```java
+/**
+ * A simple calculator for performing basic arithmetic operations.
+ * 
+ * @author John Doe
+ * @version 1.0
+ * @since 2024
+ */
+public class Calculator {
+    // Class implementation
+}
+```
+## Documenting Constructors
+
+Constructors can be documented with Javadoc just like methods. Use the `@param` tag for constructor parameters.
+
+### Example of Documenting a Constructor:
+
+```java
+/**
+ * Creates a new Calculator object with the specified precision.
+ * 
+ * @param precision the number of decimal places to round to
+ */
+public Calculator(int precision) {
+    this.precision = precision;
+}
+```
+
+## Documenting Methods
+
+For methods, use the `@param` tag for each method parameter, the `@return` tag for the return value, and `@throws` to document any exceptions that the method might throw.
+
+### Example of a Method with `@param`, `@return`, and `@throws`:
+
+```java
+/**
+ * Divides two integers and returns the result.
+ * 
+ * @param dividend the number to be divided
+ * @param divisor the number by which the dividend is divided
+ * @return the result of dividing dividend by divisor
+ * @throws ArithmeticException if the divisor is zero
+ */
+public double divide(int dividend, int divisor) {
+    if (divisor == 0) {
+        throw new ArithmeticException("Cannot divide by zero");
+    }
+    return (double) dividend / divisor;
+}
+```
+
+## Documenting Fields
+
+Fields represent variables in a class. You can use Javadoc to describe their role and purpose in the class.
+
+### Example of Documenting Fields with `@serial`:
+
+```java
+/**
+ * The maximum allowable speed for a vehicle in kilometers per hour.
+ * This value is constant and should not be modified.
+ * 
+ * @serial
+ */
+private static final int MAX_SPEED = 200;
+```
+
+
+## Documenting Exceptions with `@throws` or `@exception`
+
+Use the `@throws` tag to document the exceptions that a method may throw. This is particularly important for methods that deal with invalid input, system failures, or other error conditions.
+
+### Example of Documenting Exceptions with `@throws`:
+
+```java
+/**
+ * Parses a string into an integer.
+ * 
+ * @param input the string to parse
+ * @return the integer value of the input string
+ * @throws NumberFormatException if the input cannot be parsed to an integer
+ */
+public int parseInt(String input) {
+    try {
+        return Integer.parseInt(input);
+    } catch (NumberFormatException e) {
+        throw new NumberFormatException("Invalid input: " + input);
+    }
+}
+```
+
+## Documenting Links with `@see` and `@link`
+
+Use `@see` to link to other classes or methods, and `@link` to create an inline reference.
+
+### Example of Using `@see` and `@link`:
+
+```java
+/**
+ * Computes the square root of a number.
+ * 
+ * @param number the number to compute the square root of
+ * @return the square root of the number
+ * @see Math#sqrt(double)
+ * @see java.lang.Math#pow(double, double)
+ */
+public double computeSquareRoot(double number) {
+    return Math.sqrt(number);
+}
+```
+
+You can also use `@link` for inline links:
+
+```java
+/**
+ * Computes the area of a circle given its radius.
+ * This method uses {@link Math#PI} for the value of pi.
+ * 
+ * @param radius the radius of the circle
+ * @return the area of the circle
+ */
+public double calculateCircleArea(double radius) {
+    return Math.PI * Math.pow(radius, 2);
+}
+```
+## Generating Javadoc Documentation
+
+Once your code is properly documented, you can use the `javadoc` tool to generate HTML documentation. You can run it from the command line or use your IDE.
+
+```sh
+javadoc -d doc/ -sourcepath src/ edu.vanier.Calculator
+```
+
+- `-d doc/` specifies the output directory for the HTML files.
+- `-sourcepath src/` specifies the location of your source files.
+- `com.example.Calculator` specifies the class for which to generate documentation.

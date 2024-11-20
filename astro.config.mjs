@@ -90,6 +90,13 @@ export default defineConfig({
             }
           },
           {
+            label: "Documentation",
+            collapsed: false,
+            autogenerate: {
+              directory: "documentation"
+            }
+          },
+          {
             label: "FAQ",
             collapsed: false,
             autogenerate: {
